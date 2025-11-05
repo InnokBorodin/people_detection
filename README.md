@@ -2,11 +2,15 @@
 Pipeline for processing a video and detecting people with YOLO model
 
 Consists of 4 files:
+
     - run.py - main executable file - entry point
+    
     - detector.py - Detector class (load pretrained YOLO model, utilize GPU if possible; 
                                     main method - .detect() now only works for class 'person')
+                                    
     - video_processor.py - VideoProcessor class (processes input video, writes annotated result; 
                                     frame by frame; main method - .process_video() )
+                                    
     - utils.py - function draw_boxes (draws bounding boxes for detected objects and labels on a frame)
 
 Also includes:
