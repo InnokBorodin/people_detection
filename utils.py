@@ -19,13 +19,12 @@ def draw_boxes( frame, results, class_name, thickness: int = 2, font_scale: floa
     - np.ndarray - annotated frame with bounding boxes
     '''
     annotated_frame = frame.copy()
-    boxes = results[0].boxes  # объект Boxes
+    boxes = results[0].boxes
 
-    # Если нет детекций — возвращаем исходный кадр
+    # = no objects detected
     if boxes is None or len(boxes) == 0:
         return annotated_frame
 
-    # Переводим всё в CPU и numpy
     xyxy = boxes.xyxy.cpu().numpy()
     confidences = boxes.conf.cpu().numpy()
 
@@ -33,10 +32,10 @@ def draw_boxes( frame, results, class_name, thickness: int = 2, font_scale: floa
         x1, y1, x2, y2 = map(int, xyxy[i])
         conf = confidences[i]
 
-        # рамка
+        # bounding box
         cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 255, 0), thickness)
 
-        # текст
+        # text
         label = f'{class_name}: {conf:.2f}'
         (text_width, text_height), _ = cv2.getTextSize(
             label, cv2.FONT_HERSHEY_SIMPLEX, font_scale, font_thickness)
@@ -44,12 +43,12 @@ def draw_boxes( frame, results, class_name, thickness: int = 2, font_scale: floa
             cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 0),
             font_thickness, cv2.LINE_AA)
 
-        # подложка
+        # label base
         overlay = annotated_frame.copy()
         cv2.rectangle(overlay, 
             (x1, y1 - text_height - 10),
             (x1 + text_width, y1),
-            (0, 255, 0), -1)  # заливкa
+            (0, 255, 0), -1)  # filling
         cv2.addWeighted(overlay, 0.6, annotated_frame, 0.4, 0, annotated_frame)
 
     return annotated_frame

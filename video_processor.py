@@ -60,7 +60,7 @@ class VideoProcessor:
         if fps <= 0 or shapes[0] <= 0 or shapes[1] <= 0:
             raise ValueError('Incorrect video metadata: FPS or resolution is zero')
 
-        return cv2.VideoWriter(os.path.join(self.res_path, f'annotated_video{file_type}'), fourcc, fps, shapes)
+        return cv2.VideoWriter(os.path.join(self.res_path, f'annotated_video_{self.detector.model_name}_{self.detector.threshold}{file_type}'), fourcc, fps, shapes)
 
     def process_video(self, input_path):
         '''
@@ -75,7 +75,8 @@ class VideoProcessor:
         if not video_capture.isOpened():
             raise IOError(f'Could not open video file {input_path}. Check the codec and file integrity')
         if not video_writer.isOpened():
-            raise RuntimeError(f'Failed to create the output video file: {os.path.join(self.res_path, f'annotated_video{file_type}')}. Check write permissions')
+            raise RuntimeError(f'Failed to create the output video file: {os.path.join(self.res_path, \
+                         f'annotated_video_{self.detector.model_name}_{self.detector.threshold}{file_type}')}. Check write permissions')
 
         print('Starting processing video')
         while video_capture.isOpened():
@@ -91,7 +92,7 @@ class VideoProcessor:
 
         video_capture.release()
         video_writer.release()
-        print(f'Finished detection successfully, results saved as {os.path.join(self.res_path, f'annotated_video{file_type}')}')
+        print(f'Finished detection successfully, results saved as {os.path.join(self.res_path, f'annotated_video_{self.detector.model_name}_{self.detector.threshold}{file_type}')}')
 
 def main():
     print('Usage: python run.py <path_to_video> <output_directory> <model_name or path_to_model - optional> <detection_threshold - optional>')
@@ -101,7 +102,7 @@ def main():
         Methods:
         __init__(detector, output_dir)
         process_video(input_path) — processes video frame by frame, annotates frames and draws bounding_boxes (with utils.py), 
-        saves annotated video as output_dir/annotated_video.mp4 (or .avi)
+        saves annotated video as output_dir/annotated_video_detector.model_name_detector.threshold .mp4 (or .avi)
         ''')
     
 if __name__ == "__main__": 
